@@ -7,7 +7,7 @@ import Signup from "./pages/Signup";
 // In your router configuration
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyEmail from "./pages/VerifyEmail";
-
+import Home from "./pages/Home";
 // Add these routes
 
 function AppRouter() {
@@ -15,10 +15,11 @@ function AppRouter() {
 
   return (
     <>
-      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email" && (
+      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email" && location.pathname !== "/" &&(
         <Navbar />
       )}
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

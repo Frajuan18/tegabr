@@ -98,7 +98,7 @@ export function AuthProvider({ children }) {
       setError("");
       const actionCodeSettings = {
         // URL to redirect back to after password reset
-        url: 'http://localhost:3000/login', // Change to your production URL
+        url: 'http://tegabr.vercel.app/login', // Change to your production URL
         handleCodeInApp: true
       };
       
