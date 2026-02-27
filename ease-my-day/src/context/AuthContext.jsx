@@ -6,10 +6,15 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  confirmPasswordReset,
+  verifyPasswordResetCode,
   GoogleAuthProvider,
   signInWithPopup,
   sendEmailVerification,
-  updateProfile
+  updateProfile,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
@@ -85,18 +90,89 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Reset password
+  // ============= PASSWORD RESET FUNCTIONS =============
+
+  // 1. Send password reset email
   async function resetPassword(email) {
     try {
       setError("");
-      await sendPasswordResetEmail(auth, email);
+      const actionCodeSettings = {
+        // URL to redirect back to after password reset
+        url: 'http://localhost:3000/login', // Change to your production URL
+        handleCodeInApp: true
+      };
+      
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      return true;
     } catch (error) {
       setError(error.message);
       throw error;
     }
   }
 
-  // Send email verification - IMPROVED VERSION
+  // 2. Verify password reset code (when user clicks the link)
+  async function verifyPasswordResetCode(oobCode) {
+    try {
+      setError("");
+      const email = await verifyPasswordResetCode(auth, oobCode);
+      return email;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
+  }
+
+  // 3. Confirm password reset with new password
+  async function confirmPasswordReset(oobCode, newPassword) {
+    try {
+      setError("");
+      await confirmPasswordReset(auth, oobCode, newPassword);
+      return true;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
+  }
+
+  // 4. Update password for logged-in user
+  async function updateUserPassword(currentPassword, newPassword) {
+    try {
+      setError("");
+      
+      if (!currentUser) {
+        throw new Error("No user logged in");
+      }
+
+      // Re-authenticate user before changing password
+      const credential = EmailAuthProvider.credential(
+        currentUser.email,
+        currentPassword
+      );
+      
+      await reauthenticateWithCredential(currentUser, credential);
+      
+      // Update password
+      await updatePassword(currentUser, newPassword);
+      
+      return true;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
+  }
+
+  // 5. Check if password reset code is valid
+  async function checkPasswordResetCode(oobCode) {
+    try {
+      setError("");
+      const email = await verifyPasswordResetCode(auth, oobCode);
+      return { isValid: true, email };
+    } catch (error) {
+      return { isValid: false, error: error.message };
+    }
+  }
+
+  // Send email verification
   async function sendVerificationEmail(user = null) {
     try {
       setError("");
@@ -106,11 +182,9 @@ export function AuthProvider({ children }) {
         throw new Error("No user to verify");
       }
       
-      // You can customize the email action settings
       const actionCodeSettings = {
-        // URL you want to redirect back to after verification
         url: 'http://localhost:3000/login', // Change to your production URL
-        handleCodeInApp: true // This keeps the user in your app after clicking the link
+        handleCodeInApp: true
       };
       
       await sendEmailVerification(userToVerify, actionCodeSettings);
@@ -126,11 +200,11 @@ export function AuthProvider({ children }) {
     return currentUser?.emailVerified || false;
   }
 
-  // Force refresh user to get latest emailVerified status
+  // Force refresh user to get latest status
   async function refreshUser() {
     if (currentUser) {
       await currentUser.reload();
-      setCurrentUser({ ...currentUser }); // Trigger re-render
+      setCurrentUser({ ...currentUser });
     }
   }
 
@@ -153,6 +227,10 @@ export function AuthProvider({ children }) {
     loginWithGoogle,
     logout,
     resetPassword,
+    verifyPasswordResetCode,
+    confirmPasswordReset,
+    updateUserPassword,
+    checkPasswordResetCode,
     sendVerificationEmail,
     isEmailVerified,
     refreshUser,
