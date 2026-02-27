@@ -16,7 +16,7 @@ function AppRouter() {
 
   return (
     <>
-      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email" && location.pathname !== "/" && location.pathname !== "/reset-password" && (
+      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email"  && location.pathname !== "/reset-password" && (
         <Navbar />
       )}
       <Routes>
