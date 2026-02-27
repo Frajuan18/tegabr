@@ -17,17 +17,23 @@ export default function ResetPassword() {
   const location = useLocation();
 
   useEffect(() => {
-    // Get email from URL or session storage
+    // Get email from URL params or session storage
     const queryParams = new URLSearchParams(location.search);
     const emailParam = queryParams.get('email');
     const storedEmail = sessionStorage.getItem('resetEmail');
+    const storedCode = sessionStorage.getItem('resetOobCode');
     
     if (emailParam) {
       setEmail(emailParam);
     } else if (storedEmail) {
       setEmail(storedEmail);
     }
-  }, [location]);
+
+    // If no code in session storage, redirect to forgot password
+    if (!storedCode) {
+      setError("No reset code found. Please request a new reset link.");
+    }
+  }, [location, setError]);
 
   const handleResetPassword = async (e) => {
     e.preventDefault();

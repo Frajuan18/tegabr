@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function VerifyEmail() {
   const navigate = useNavigate();
-  const { currentUser, sendVerificationEmail, isEmailVerified, refreshUser } = useAuth();
+  const { currentUser, sendVerificationEmail, logout, refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [verificationError, setVerificationError] = useState("");

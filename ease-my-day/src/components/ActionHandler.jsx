@@ -15,8 +15,6 @@ export default function ActionHandler() {
       const queryParams = new URLSearchParams(location.search);
       const mode = queryParams.get('mode');
       const oobCode = queryParams.get('oobCode');
-      const continueUrl = queryParams.get('continueUrl');
-      const lang = queryParams.get('lang');
 
       console.log("Action Handler - Mode:", mode);
       console.log("Action Handler - oobCode:", oobCode);
@@ -29,7 +27,6 @@ export default function ActionHandler() {
 
       try {
         if (mode === 'verifyEmail') {
-          // Handle email verification
           setStatus("processing");
           await applyActionCode(oobCode);
           await refreshUser();
@@ -37,18 +34,15 @@ export default function ActionHandler() {
           setTimeout(() => navigate("/dashboard"), 2000);
         } 
         else if (mode === 'resetPassword') {
-          // Handle password reset - verify code then redirect to reset page
           setStatus("processing");
           const email = await verifyPasswordResetCode(oobCode);
-          // Store email and code in session storage for the reset page
+          // Store in session storage
           sessionStorage.setItem('resetEmail', email);
           sessionStorage.setItem('resetOobCode', oobCode);
+          // Navigate to reset password page
           navigate(`/reset-password?email=${encodeURIComponent(email)}`);
         } 
         else if (mode === 'recoverEmail') {
-          // Handle email recovery
-          setStatus("processing");
-          // Add email recovery logic here if needed
           navigate('/login');
         } 
         else {
