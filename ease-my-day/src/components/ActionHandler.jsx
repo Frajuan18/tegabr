@@ -11,13 +11,19 @@ export default function ActionHandler() {
     const mode = queryParams.get('mode');
     const oobCode = queryParams.get('oobCode');
     
+    console.log("ActionHandler - Full URL:", window.location.href);
     console.log("ActionHandler - Mode:", mode);
     console.log("ActionHandler - Code:", oobCode);
 
     if (!oobCode) {
+      console.log("No oobCode found, redirecting to home");
       navigate('/');
       return;
     }
+
+    // Store the code in sessionStorage as backup
+    sessionStorage.setItem('lastActionCode', oobCode);
+    sessionStorage.setItem('lastActionMode', mode);
 
     // Redirect based on mode
     if (mode === 'resetPassword') {
