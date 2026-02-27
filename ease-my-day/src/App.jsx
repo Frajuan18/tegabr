@@ -10,6 +10,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Home from "./pages/Home";
 import ResetPassword from "./pages/ResetPassword";
 import ActionHandler from "./components/ActionHandler";
+import Dashboard from "./pages/Dashboard";
 
 function AppRouter() {
   const location = useLocation();
@@ -27,6 +28,7 @@ function AppRouter() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/action" element={<ActionHandler />} /> 
+        <Route path="/dashboard" element={<Dashboard />} /> 
       </Routes>
     </>
   );
