@@ -34,16 +34,18 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Sign up
+  // ============= SIGNUP =============
   async function signup(email, password, username, phone) {
     try {
       setError("");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
+      // Update profile with username
       await updateProfile(userCredential.user, {
         displayName: username
       });
       
+      // Send email verification
       await sendVerificationEmail(userCredential.user);
       
       return userCredential;
@@ -53,7 +55,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Login
+  // ============= LOGIN =============
   async function login(email, password) {
     try {
       setError("");
@@ -65,7 +67,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Google Login
+  // ============= GOOGLE LOGIN =============
   async function loginWithGoogle() {
     try {
       setError("");
@@ -78,7 +80,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Logout
+  // ============= LOGOUT =============
   async function logout() {
     try {
       setError("");
@@ -89,7 +91,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Send password reset email
+  // ============= SEND PASSWORD RESET EMAIL =============
   async function resetPassword(email) {
     try {
       setError("");
@@ -105,7 +107,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Verify password reset code
+  // ============= VERIFY PASSWORD RESET CODE =============
   async function verifyPasswordResetCode(oobCode) {
     try {
       setError("");
@@ -117,7 +119,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Confirm password reset
+  // ============= CONFIRM PASSWORD RESET =============
   async function confirmPasswordReset(oobCode, newPassword) {
     try {
       setError("");
@@ -129,7 +131,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Apply action code (for email verification)
+  // ============= APPLY ACTION CODE (EMAIL VERIFICATION) =============
   async function applyActionCode(oobCode) {
     try {
       setError("");
@@ -141,7 +143,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Send email verification
+  // ============= SEND EMAIL VERIFICATION =============
   async function sendVerificationEmail(user = null) {
     try {
       setError("");
@@ -161,7 +163,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Update password for logged-in user
+  // ============= UPDATE PASSWORD (WHEN LOGGED IN) =============
   async function updateUserPassword(currentPassword, newPassword) {
     try {
       setError("");
@@ -182,7 +184,28 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Refresh user
+  // ============= UPDATE USER PROFILE =============
+  async function updateUserProfile(profileData) {
+    try {
+      setError("");
+      if (!currentUser) throw new Error("No user logged in");
+      
+      await updateProfile(currentUser, profileData);
+      await refreshUser();
+      
+      return true;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
+  }
+
+  // ============= CHECK IF EMAIL IS VERIFIED =============
+  function isEmailVerified() {
+    return currentUser?.emailVerified || false;
+  }
+
+  // ============= REFRESH USER DATA =============
   async function refreshUser() {
     if (currentUser) {
       await currentUser.reload();
@@ -190,12 +213,46 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Check if email is verified
-  function isEmailVerified() {
-    return currentUser?.emailVerified || false;
+  // ============= GET USER DISPLAY NAME =============
+  function getDisplayName() {
+    if (!currentUser) return null;
+    
+    if (currentUser.displayName) {
+      return currentUser.displayName;
+    } else if (currentUser.email) {
+      // For phone-based signups
+      const emailParts = currentUser.email.split('@');
+      if (emailParts[0] && emailParts[1] === 'tegbar.phone') {
+        // Format phone number
+        const phone = emailParts[0];
+        if (phone.length === 10) {
+          return `(${phone.slice(0,3)}) ${phone.slice(3,6)}-${phone.slice(6)}`;
+        }
+        return phone;
+      }
+      return emailParts[0];
+    }
+    return "User";
   }
 
-  // Listen for auth state changes
+  // ============= GET USER INITIALS =============
+  function getUserInitials() {
+    const name = getDisplayName();
+    if (!name) return "U";
+    
+    if (name.includes('@') || name.includes('(')) {
+      return name.substring(0, 2).toUpperCase();
+    }
+    
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
+  // ============= LISTEN FOR AUTH STATE CHANGES =============
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -206,21 +263,35 @@ export function AuthProvider({ children }) {
   }, []);
 
   const value = {
+    // User state
     currentUser,
     loading,
     error,
+    
+    // Auth functions
     signup,
     login,
     loginWithGoogle,
     logout,
+    
+    // Password reset functions
     resetPassword,
     verifyPasswordResetCode,
     confirmPasswordReset,
-    applyActionCode,
-    sendVerificationEmail,
     updateUserPassword,
+    
+    // Email verification functions
+    sendVerificationEmail,
+    applyActionCode,
     isEmailVerified,
+    
+    // Profile functions
+    updateUserProfile,
     refreshUser,
+    getDisplayName,
+    getUserInitials,
+    
+    // Error handling
     setError
   };
 

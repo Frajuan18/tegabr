@@ -11,15 +11,20 @@ export default function ActionHandler() {
     const mode = queryParams.get('mode');
     const oobCode = queryParams.get('oobCode');
     
-    // Simply redirect based on mode
+    console.log("ActionHandler - Mode:", mode);
+    console.log("ActionHandler - Code:", oobCode);
+
+    if (!oobCode) {
+      navigate('/');
+      return;
+    }
+
+    // Redirect based on mode
     if (mode === 'resetPassword') {
-      // For password reset, go to reset page with code
       navigate(`/reset-password?oobCode=${oobCode}`);
     } else if (mode === 'verifyEmail') {
-      // For email verification, go to verify page with code
       navigate(`/verify-email?oobCode=${oobCode}`);
     } else {
-      // Default to home
       navigate('/');
     }
   }, [location, navigate]);

@@ -1,13 +1,13 @@
 // src/components/VerifyEmail.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { applyActionCode } from "firebase/auth";
 import { auth } from "../lib/firebase";
+import { applyActionCode } from "firebase/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function VerifyEmail() {
   const [status, setStatus] = useState("verifying");
-  const { currentUser, refreshUser } = useAuth();
+  const { refreshUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -15,21 +15,22 @@ export default function VerifyEmail() {
     const queryParams = new URLSearchParams(location.search);
     const oobCode = queryParams.get('oobCode');
 
-    if (oobCode) {
-      // Verify email with code
-      applyActionCode(auth, oobCode)
-        .then(async () => {
-          await refreshUser();
-          setStatus("success");
-          setTimeout(() => navigate("/dashboard"), 2000);
-        })
-        .catch(() => {
-          setStatus("error");
-        });
-    } else if (currentUser?.emailVerified) {
-      navigate("/dashboard");
+    if (!oobCode) {
+      setStatus("error");
+      return;
     }
-  }, [location, currentUser, navigate, refreshUser]);
+
+    // Apply the verification code
+    applyActionCode(auth, oobCode)
+      .then(async () => {
+        await refreshUser();
+        setStatus("success");
+        setTimeout(() => navigate("/dashboard"), 2000);
+      })
+      .catch(() => {
+        setStatus("error");
+      });
+  }, [location, navigate, refreshUser]);
 
   if (status === "verifying") {
     return (
@@ -60,6 +61,12 @@ export default function VerifyEmail() {
         <div className="text-6xl mb-4">❌</div>
         <h1 className="text-2xl font-bold text-[#111111] mb-2">Verification Failed</h1>
         <p className="text-[#6B6B70]">The link may have expired.</p>
+        <button
+          onClick={() => navigate('/')}
+          className="mt-4 px-6 py-2 bg-[#1C1C1E] text-white rounded-xl"
+        >
+          Go Home
+        </button>
       </div>
     </div>
   );
