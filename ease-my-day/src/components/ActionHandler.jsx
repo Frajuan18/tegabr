@@ -21,7 +21,7 @@ export default function ActionHandler() {
       return;
     }
 
-    // Store the code in sessionStorage as backup
+    // Store the code and mode in sessionStorage as backup
     sessionStorage.setItem('lastActionCode', oobCode);
     sessionStorage.setItem('lastActionMode', mode);
 

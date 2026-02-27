@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { FaLock, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { auth } from "../lib/firebase";
+import { verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -14,29 +15,63 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   
-  const { verifyPasswordResetCode, confirmPasswordReset } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const oobCode = queryParams.get('oobCode');
+    const verifyCode = async () => {
+      const queryParams = new URLSearchParams(location.search);
+      let oobCode = queryParams.get('oobCode');
+      
+      console.log("ResetPassword - Full URL:", window.location.href);
+      console.log("ResetPassword - oobCode from URL:", oobCode);
 
-    if (!oobCode) {
-      setError("Invalid reset link");
-      return;
-    }
+      // Also check sessionStorage as backup
+      const storedCode = sessionStorage.getItem('lastActionCode');
+      const storedMode = sessionStorage.getItem('lastActionMode');
+      
+      console.log("ResetPassword - storedCode:", storedCode);
+      console.log("ResetPassword - storedMode:", storedMode);
 
-    verifyPasswordResetCode(oobCode)
-      .then((email) => {
-        setEmail(email);
-        setIsValid(true);
-        sessionStorage.setItem('resetCode', oobCode);
-      })
-      .catch(() => {
-        setError("This reset link has expired. Please request a new one.");
-      });
-  }, [location, verifyPasswordResetCode]);
+      // Use URL code first, then stored code
+      const codeToUse = oobCode || storedCode;
+
+      if (!codeToUse) {
+        setError("No reset code found. Please request a new reset link.");
+        return;
+      }
+
+      // Only proceed if this is for password reset
+      if (storedMode === 'resetPassword' || oobCode) {
+        try {
+          console.log("Verifying reset code:", codeToUse);
+          const resetEmail = await verifyPasswordResetCode(auth, codeToUse);
+          console.log("Code valid for email:", resetEmail);
+          
+          setEmail(resetEmail);
+          setIsValid(true);
+          
+          // Store the code for later use
+          sessionStorage.setItem('resetCode', codeToUse);
+          
+          // Clear the action code from storage
+          sessionStorage.removeItem('lastActionCode');
+          sessionStorage.removeItem('lastActionMode');
+        } catch (err) {
+          console.error("Code verification failed:", err);
+          if (err.code === 'auth/expired-action-code') {
+            setError("This reset link has expired. Please request a new one.");
+          } else if (err.code === 'auth/invalid-action-code') {
+            setError("This reset link is invalid. Please request a new one.");
+          } else {
+            setError(err.message);
+          }
+        }
+      }
+    };
+
+    verifyCode();
+  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,15 +87,30 @@ export default function ResetPassword() {
     }
     
     setLoading(true);
+    setError("");
     
     try {
-      const oobCode = sessionStorage.getItem('resetCode');
-      await confirmPasswordReset(oobCode, password);
+      const resetCode = sessionStorage.getItem('resetCode');
+      console.log("Confirming reset with code:", resetCode);
+      
+      if (!resetCode) {
+        throw new Error("Reset code not found. Please request a new link.");
+      }
+      
+      await confirmPasswordReset(auth, resetCode, password);
+      console.log("Password reset successful!");
+      
       sessionStorage.removeItem('resetCode');
       setSuccess(true);
+      
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      setError(err.message);
+      console.error("Password reset failed:", err);
+      if (err.code === 'auth/expired-action-code') {
+        setError("This reset link has expired. Please request a new one.");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -69,10 +119,16 @@ export default function ResetPassword() {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F2F2F7]">
-        <div className="text-center">
+        <div className="text-center max-w-md px-4">
           <FaCheckCircle className="text-6xl text-[#4CAF50] mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-[#111111] mb-2">Password Reset!</h1>
-          <p className="text-[#6B6B70]">Redirecting to login...</p>
+          <h1 className="text-3xl font-bold text-[#111111] mb-2">Password Reset!</h1>
+          <p className="text-[#6B6B70] mb-4">Your password has been successfully reset.</p>
+          <div className="flex justify-center space-x-2">
+            <div className="w-2 h-2 bg-[#1C1C1E] rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-[#1C1C1E] rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+            <div className="w-2 h-2 bg-[#1C1C1E] rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+          </div>
+          <p className="text-sm text-[#9A9AA0] mt-4">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -83,18 +139,22 @@ export default function ResetPassword() {
       <div className="w-full max-w-md">
         <div className="bg-white p-8 rounded-3xl shadow-[0_10px_0_#E5E5EA]">
           <h1 className="text-2xl font-bold text-center text-[#111111] mb-2">Reset Password</h1>
+          
           {email && <p className="text-center text-[#6B6B70] mb-6">for {email}</p>}
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl">
-              {error}
-              <Link to="/forgot-password" className="block mt-2 font-semibold underline">
-                Request new link
+            <div className="mb-4 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+              <p className="text-red-600 mb-2">{error}</p>
+              <Link 
+                to="/forgot-password" 
+                className="inline-block text-sm font-semibold text-[#1C1C1E] underline"
+              >
+                Request new reset link
               </Link>
             </div>
           )}
 
-          {isValid && (
+          {isValid && !error && (
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-[#6B6B70] mb-2">New Password</label>
@@ -104,13 +164,15 @@ export default function ResetPassword() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 p-3 border-2 border-[#E5E5EA] rounded-2xl bg-[#F2F2F7]"
+                    className="w-full pl-10 p-3 border-2 border-[#E5E5EA] rounded-2xl bg-[#F2F2F7] focus:border-[#1C1C1E] focus:outline-none"
+                    placeholder="Enter new password"
                     required
+                    disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9A9AA0] hover:text-[#1C1C1E]"
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -123,15 +185,17 @@ export default function ResetPassword() {
                   type={showPassword ? "text" : "password"}
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
-                  className="w-full p-3 border-2 border-[#E5E5EA] rounded-2xl bg-[#F2F2F7]"
+                  className="w-full p-3 border-2 border-[#E5E5EA] rounded-2xl bg-[#F2F2F7] focus:border-[#1C1C1E] focus:outline-none"
+                  placeholder="Confirm new password"
                   required
+                  disabled={loading}
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-[#1C1C1E] text-white rounded-2xl font-semibold shadow-[0_4px_0_#000000] hover:translate-y-1 transition-all"
+                className="w-full py-3 bg-[#1C1C1E] text-white rounded-2xl font-semibold shadow-[0_4px_0_#000000] hover:translate-y-1 transition-all disabled:opacity-50"
               >
                 {loading ? "Resetting..." : "Reset Password"}
               </button>
