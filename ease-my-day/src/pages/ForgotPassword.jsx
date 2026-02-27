@@ -55,7 +55,7 @@ export default function ForgotPassword() {
               </div>
               <h1 className="text-3xl font-extrabold text-[#111111] mb-2 tracking-tight">Forgot password?</h1>
               <p className="text-lg text-[#6B6B70]">
-                Enter your email address or phone number and we'll send you a password reset link.
+                Enter your email address and we'll send you a password reset link.
               </p>
             </div>
 
@@ -71,7 +71,7 @@ export default function ForgotPassword() {
               <div className="bg-white rounded-3xl p-6 shadow-[0_10px_0_#E5E5EA,0_12px_24px_rgba(0,0,0,0.1)]">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-[#6B6B70] mb-1.5">
-                    Email or Phone Number
+                    Email Address
                   </label>
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#9A9AA0]">
@@ -79,17 +79,17 @@ export default function ForgotPassword() {
                     </div>
                     <input
                       id="email"
-                      type="text"
+                      type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full rounded-2xl border-2 border-[#E5E5EA] bg-[#F2F2F7] pl-10 pr-5 py-3.5 text-base text-[#111111] placeholder-[#9A9AA0] focus:border-[#1C1C1E] focus:ring-2 focus:ring-[#1C1C1E]/10 focus:outline-none transition-all duration-200"
-                      placeholder="you@university.edu or +1 (555) 000-0000"
+                      placeholder="you@university.edu"
                       disabled={isLoading}
                     />
                   </div>
                   <p className="mt-2 text-xs text-[#9A9AA0]">
-                    We'll send a reset link to your email. For phone numbers, we'll send an SMS with instructions.
+                    We'll send a password reset link to this email.
                   </p>
                 </div>
               </div>

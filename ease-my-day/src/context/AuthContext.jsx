@@ -92,14 +92,15 @@ export function AuthProvider({ children }) {
 
   // ============= PASSWORD RESET FUNCTIONS =============
 
-  // 1. Send password reset email
+  // 1. Send password reset email - UPDATED WITH VERCEL URL
   async function resetPassword(email) {
     try {
       setError("");
+      
+      // Use your Vercel URL
       const actionCodeSettings = {
-        // URL to redirect back to after password reset
-        url: 'http://tegabr.vercel.app/login', // Change to your production URL
-        handleCodeInApp: true
+        url: 'https://tegabr.vercel.app/reset-password', // Your Vercel URL
+        handleCodeInApp: true // This ensures the link opens in your web app
       };
       
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
@@ -183,7 +184,7 @@ export function AuthProvider({ children }) {
       }
       
       const actionCodeSettings = {
-        url: 'http://localhost:3000/login', // Change to your production URL
+        url: 'https://tegabr.vercel.app/login',
         handleCodeInApp: true
       };
       

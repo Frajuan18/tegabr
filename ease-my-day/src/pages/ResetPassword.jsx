@@ -22,11 +22,9 @@ export default function ResetPassword() {
     const queryParams = new URLSearchParams(location.search);
     const oobCode = queryParams.get('oobCode');
     const mode = queryParams.get('mode');
-    
-    console.log("Reset params:", { oobCode, mode }); // Debug log
 
     if (!oobCode || mode !== 'resetPassword') {
-      setError("Invalid or missing reset link");
+      setError("Invalid or missing reset link. Please request a new one.");
       return;
     }
 

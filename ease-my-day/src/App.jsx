@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyEmail from "./pages/VerifyEmail";
 import Home from "./pages/Home";
+import ResetPassword from "./pages/ResetPassword";
 // Add these routes
 
 function AppRouter() {
@@ -15,7 +16,7 @@ function AppRouter() {
 
   return (
     <>
-      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email" && location.pathname !== "/" &&(
+      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email" && location.pathname !== "/" && location.pathname !== "/reset-password" && (
         <Navbar />
       )}
       <Routes>
@@ -24,6 +25,7 @@ function AppRouter() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} /> 
       </Routes>
     </>
   );
