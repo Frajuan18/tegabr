@@ -9,7 +9,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyEmail from "./pages/VerifyEmail";
 import Home from "./pages/Home";
 import ResetPassword from "./pages/ResetPassword";
-// Add these routes
+import ActionHandler from "./components/ActionHandler";
 
 function AppRouter() {
   const location = useLocation();
@@ -25,7 +25,8 @@ function AppRouter() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/reset-password" element={<ResetPassword />} /> 
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/action" element={<ActionHandler />} /> 
       </Routes>
     </>
   );

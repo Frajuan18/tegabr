@@ -8,6 +8,7 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   verifyPasswordResetCode,
+  applyActionCode,
   GoogleAuthProvider,
   signInWithPopup,
   sendEmailVerification,
@@ -33,18 +34,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Sign up with email and password (for phone-based signup)
+  // Sign up
   async function signup(email, password, username, phone) {
     try {
       setError("");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Update profile with username
       await updateProfile(userCredential.user, {
         displayName: username
       });
       
-      // Send email verification
       await sendVerificationEmail(userCredential.user);
       
       return userCredential;
@@ -54,7 +53,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Login with email and password
+  // Login
   async function login(email, password) {
     try {
       setError("");
@@ -66,7 +65,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Login with Google
+  // Google Login
   async function loginWithGoogle() {
     try {
       setError("");
@@ -90,19 +89,14 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // ============= PASSWORD RESET FUNCTIONS =============
-
-  // 1. Send password reset email - UPDATED WITH VERCEL URL
+  // Send password reset email
   async function resetPassword(email) {
     try {
       setError("");
-      
-      // Use your Vercel URL
       const actionCodeSettings = {
-        url: 'https://tegabr.vercel.app/reset-password', // Your Vercel URL
-        handleCodeInApp: true // This ensures the link opens in your web app
+        url: 'https://tegabr.vercel.app/action',
+        handleCodeInApp: true
       };
-      
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
       return true;
     } catch (error) {
@@ -111,7 +105,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // 2. Verify password reset code (when user clicks the link)
+  // Verify password reset code
   async function verifyPasswordResetCode(oobCode) {
     try {
       setError("");
@@ -123,7 +117,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // 3. Confirm password reset with new password
+  // Confirm password reset
   async function confirmPasswordReset(oobCode, newPassword) {
     try {
       setError("");
@@ -135,41 +129,15 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // 4. Update password for logged-in user
-  async function updateUserPassword(currentPassword, newPassword) {
+  // Apply action code (for email verification)
+  async function applyActionCode(oobCode) {
     try {
       setError("");
-      
-      if (!currentUser) {
-        throw new Error("No user logged in");
-      }
-
-      // Re-authenticate user before changing password
-      const credential = EmailAuthProvider.credential(
-        currentUser.email,
-        currentPassword
-      );
-      
-      await reauthenticateWithCredential(currentUser, credential);
-      
-      // Update password
-      await updatePassword(currentUser, newPassword);
-      
+      await applyActionCode(auth, oobCode);
       return true;
     } catch (error) {
       setError(error.message);
       throw error;
-    }
-  }
-
-  // 5. Check if password reset code is valid
-  async function checkPasswordResetCode(oobCode) {
-    try {
-      setError("");
-      const email = await verifyPasswordResetCode(auth, oobCode);
-      return { isValid: true, email };
-    } catch (error) {
-      return { isValid: false, error: error.message };
     }
   }
 
@@ -178,13 +146,10 @@ export function AuthProvider({ children }) {
     try {
       setError("");
       const userToVerify = user || currentUser;
-      
-      if (!userToVerify) {
-        throw new Error("No user to verify");
-      }
+      if (!userToVerify) throw new Error("No user to verify");
       
       const actionCodeSettings = {
-        url: 'https://tegabr.vercel.app/login',
+        url: 'https://tegabr.vercel.app/action',
         handleCodeInApp: true
       };
       
@@ -196,17 +161,38 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Check if email is verified
-  function isEmailVerified() {
-    return currentUser?.emailVerified || false;
+  // Update password for logged-in user
+  async function updateUserPassword(currentPassword, newPassword) {
+    try {
+      setError("");
+      if (!currentUser) throw new Error("No user logged in");
+
+      const credential = EmailAuthProvider.credential(
+        currentUser.email,
+        currentPassword
+      );
+      
+      await reauthenticateWithCredential(currentUser, credential);
+      await updatePassword(currentUser, newPassword);
+      
+      return true;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
   }
 
-  // Force refresh user to get latest status
+  // Refresh user
   async function refreshUser() {
     if (currentUser) {
       await currentUser.reload();
       setCurrentUser({ ...currentUser });
     }
+  }
+
+  // Check if email is verified
+  function isEmailVerified() {
+    return currentUser?.emailVerified || false;
   }
 
   // Listen for auth state changes
@@ -230,9 +216,9 @@ export function AuthProvider({ children }) {
     resetPassword,
     verifyPasswordResetCode,
     confirmPasswordReset,
-    updateUserPassword,
-    checkPasswordResetCode,
+    applyActionCode,
     sendVerificationEmail,
+    updateUserPassword,
     isEmailVerified,
     refreshUser,
     setError
