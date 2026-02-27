@@ -1,19 +1,20 @@
 // src/components/ResetPassword.jsx
 import { useState, useEffect } from "react";
-import { FaLock } from "react-icons/fa";
+import { FaLock, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { auth } from "../lib/firebase";
-import { confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   
+  const { verifyPasswordResetCode, confirmPasswordReset } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,8 +27,7 @@ export default function ResetPassword() {
       return;
     }
 
-    // Verify the code
-    verifyPasswordResetCode(auth, oobCode)
+    verifyPasswordResetCode(oobCode)
       .then((email) => {
         setEmail(email);
         setIsValid(true);
@@ -36,7 +36,7 @@ export default function ResetPassword() {
       .catch(() => {
         setError("This reset link has expired. Please request a new one.");
       });
-  }, [location]);
+  }, [location, verifyPasswordResetCode]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ export default function ResetPassword() {
     
     try {
       const oobCode = sessionStorage.getItem('resetCode');
-      await confirmPasswordReset(auth, oobCode, password);
+      await confirmPasswordReset(oobCode, password);
       sessionStorage.removeItem('resetCode');
       setSuccess(true);
       setTimeout(() => navigate('/login'), 2000);
@@ -70,18 +70,10 @@ export default function ResetPassword() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F2F2F7]">
         <div className="text-center">
-          <div className="text-6xl mb-4">✅</div>
+          <FaCheckCircle className="text-6xl text-[#4CAF50] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#111111] mb-2">Password Reset!</h1>
           <p className="text-[#6B6B70]">Redirecting to login...</p>
         </div>
-      </div>
-    );
-  }
-
-  if (!isValid && !error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F2F2F7]">
-        <div className="animate-spin h-8 w-8 border-4 border-[#1C1C1E] border-t-transparent rounded-full"></div>
       </div>
     );
   }
@@ -109,19 +101,26 @@ export default function ResetPassword() {
                 <div className="relative">
                   <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9A9AA0]" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 p-3 border-2 border-[#E5E5EA] rounded-2xl bg-[#F2F2F7]"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
                 </div>
               </div>
 
               <div className="mb-6">
                 <label className="block text-sm font-medium text-[#6B6B70] mb-2">Confirm Password</label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   className="w-full p-3 border-2 border-[#E5E5EA] rounded-2xl bg-[#F2F2F7]"
