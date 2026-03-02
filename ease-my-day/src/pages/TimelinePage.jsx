@@ -72,7 +72,7 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] font-outfit -ml-10 lg:ml-2">
+    <div className="min-h-screen bg-[#F2F2F7] font-outfit lg:ml-2">
       <Sidebar />
       
       <div className="lg:ml-64 ml-0 min-h-screen p-4 sm:p-6 lg:p-8">

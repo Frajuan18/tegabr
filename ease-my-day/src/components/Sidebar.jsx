@@ -64,7 +64,7 @@ export default function Sidebar() {
 
   // add minimal padding to body on mobile when menu button is visible
   useEffect(() => {
-    if (isMobile && !isOpen) {
+    if (isMobile && !isOpen && location.pathname !== '/timeline' && location.pathname !== '/reminders') {
       document.body.style.paddingLeft = '3rem';
     } else {
       document.body.style.paddingLeft = '';
@@ -72,7 +72,7 @@ export default function Sidebar() {
     return () => {
       document.body.style.paddingLeft = '';
     };
-  }, [isMobile, isOpen]);
+  }, [isMobile, isOpen, location.pathname]);
 
   const menuItems = [
     // Main Dashboard
@@ -82,7 +82,7 @@ export default function Sidebar() {
     { path: "/timeline", name: "Timeline Views", icon: FaCalendarAlt, section: "timeline" },
     
     // Smart Features
-    { path: "/reminders", name: "Smart Reminders", icon: FaBell, section: "smart" },
+    { path: "/smart-reminders", name: "Smart Reminders", icon: FaBell, section: "smart" },
     { path: "/workload", name: "Workload Awareness", icon: FaBalanceScale, section: "smart" },
     { path: "/personal-tasks", name: "Personal Tasks", icon: FaClipboardList, section: "smart" },
     { path: "/study-planner", name: "Study Planner", icon: FaBrain, section: "smart" },
