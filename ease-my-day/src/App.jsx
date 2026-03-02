@@ -11,13 +11,13 @@ import Home from "./pages/Home";
 import ResetPassword from "./pages/ResetPassword";
 import ActionHandler from "./components/ActionHandler";
 import Dashboard from "./pages/Dashboard";
-
+import TimelinePage from "./pages/TimelinePage";
 function AppRouter() {
   const location = useLocation();
 
   return (
     <>
-      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email"  && location.pathname !== "/reset-password" && (
+      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email"  && location.pathname !== "/reset-password" && location.pathname !== "/dashboard" && location.pathname !== "/timeline" && (
         <Navbar />
       )}
       <Routes>
@@ -29,6 +29,8 @@ function AppRouter() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/action" element={<ActionHandler />} /> 
         <Route path="/dashboard" element={<Dashboard />} /> 
+        <Route path="/timeline" element={<TimelinePage />} />
+        
       </Routes>
     </>
   );
