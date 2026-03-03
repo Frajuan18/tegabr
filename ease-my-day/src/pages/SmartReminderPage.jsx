@@ -648,368 +648,382 @@ export default function SmartRemindersPage() {
 
       {/* Add Reminder Modal - Improved Design */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-[0_20px_0_#E5E5EA,0_25px_50px_rgba(0,0,0,0.15)]">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-[#E5E5EA] p-6 rounded-t-3xl z-10">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-[#111111]">
-                    Create New Reminder
-                  </h2>
-                  <p className="text-sm text-[#6B6B70] mt-1">
-                    Set up a smart reminder for your task
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="p-2 hover:bg-[#F2F2F7] rounded-lg transition-colors"
-                >
-                  <FaTimes className="h-5 w-5 text-[#6B6B70]" />
-                </button>
-              </div>
-            </div>
-
-            <form onSubmit={handleAddReminder} className="p-6">
-              {/* Task Type Selection - Visual Cards */}
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-[#6B6B70] mb-3">
-                  What type of task?
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setNewReminder({
-                        ...newReminder,
-                        task_type: "assignment",
-                      })
-                    }
-                    className={`relative p-6 rounded-2xl border-2 transition-all ${
-                      newReminder.task_type === "assignment"
-                        ? "border-[#1C1C1E] bg-[#F2F2F7] shadow-[0_4px_0_#1C1C1E]"
-                        : "border-[#E5E5EA] hover:border-[#9A9AA0]"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center text-center">
-                      <div
-                        className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
-                          newReminder.task_type === "assignment"
-                            ? "bg-[#1C1C1E]"
-                            : "bg-[#F2F2F7]"
-                        }`}
-                      >
-                        <FaBook
-                          className={`h-6 w-6 ${
-                            newReminder.task_type === "assignment"
-                              ? "text-white"
-                              : "text-[#6B6B70]"
-                          }`}
-                        />
-                      </div>
-                      <h3
-                        className={`font-semibold ${
-                          newReminder.task_type === "assignment"
-                            ? "text-[#111111]"
-                            : "text-[#6B6B70]"
-                        }`}
-                      >
-                        Assignment
-                      </h3>
-                      <p className="text-xs text-[#9A9AA0] mt-1">
-                        Course-related tasks
-                      </p>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setNewReminder({ ...newReminder, task_type: "personal" })
-                    }
-                    className={`relative p-6 rounded-2xl border-2 transition-all ${
-                      newReminder.task_type === "personal"
-                        ? "border-[#1C1C1E] bg-[#F2F2F7] shadow-[0_4px_0_#1C1C1E]"
-                        : "border-[#E5E5EA] hover:border-[#9A9AA0]"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center text-center">
-                      <div
-                        className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
-                          newReminder.task_type === "personal"
-                            ? "bg-[#1C1C1E]"
-                            : "bg-[#F2F2F7]"
-                        }`}
-                      >
-                        <FaUser
-                          className={`h-6 w-6 ${
-                            newReminder.task_type === "personal"
-                              ? "text-white"
-                              : "text-[#6B6B70]"
-                          }`}
-                        />
-                      </div>
-                      <h3
-                        className={`font-semibold ${
-                          newReminder.task_type === "personal"
-                            ? "text-[#111111]"
-                            : "text-[#6B6B70]"
-                        }`}
-                      >
-                        Personal Task
-                      </h3>
-                      <p className="text-xs text-[#9A9AA0] mt-1">
-                        Self-study & goals
-                      </p>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Two-Column Layout for Form Fields */}
-              <div className="grid grid-cols-2 gap-4">
-                {/* Left Column */}
-                <div className="space-y-4">
-                  {/* Title */}
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+          {/* Modal container */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[90vh] mx-2 sm:mx-4 shadow-[0_20px_0_#E5E5EA,0_25px_50px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden">
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto">
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-white border-b border-[#E5E5EA] p-4 sm:p-5 md:p-6 z-10">
+                <div className="flex items-center justify-between">
                   <div>
-                    <label
-                      htmlFor="title"
-                      className="block text-sm font-medium text-[#6B6B70] mb-2"
-                    >
-                      Title <span className="text-[#FF7A7A]">*</span>
-                    </label>
-                    <div className="relative">
-                      <FaTag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
-                      <input
-                        type="text"
-                        id="title"
-                        required
-                        value={newReminder.title}
-                        onChange={(e) =>
-                          setNewReminder({
-                            ...newReminder,
-                            title: e.target.value,
-                          })
-                        }
-                        className="w-full pl-10 pr-4 py-3 border-2 border-[#E5E5EA] rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors"
-                        placeholder="e.g., Study for exam"
-                      />
-                    </div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#111111]">
+                      Create New Reminder
+                    </h2>
+                    <p className="text-xs sm:text-sm text-[#6B6B70] mt-0.5 sm:mt-1">
+                      Set up a smart reminder for your task
+                    </p>
                   </div>
+                  <button
+                    onClick={() => setShowAddModal(false)}
+                    className="flex-shrink-0 p-1.5 sm:p-2 hover:bg-[#F2F2F7] rounded-lg transition-colors ml-4"
+                  >
+                    <FaTimes className="h-4 w-4 sm:h-5 sm:w-5 text-[#6B6B70]" />
+                  </button>
+                </div>
+              </div>
 
-                  {/* Course (conditional) */}
-                  {newReminder.task_type === "assignment" && (
+              {/* Form */}
+              <form onSubmit={handleAddReminder} className="p-4 sm:p-5 md:p-6">
+                {/* Task Type Selection */}
+                <div className="mb-6 sm:mb-8">
+                  <label className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-2 sm:mb-3">
+                    What type of task?
+                  </label>
+                  <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                    {/* Assignment Card */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setNewReminder({
+                          ...newReminder,
+                          task_type: "assignment",
+                        })
+                      }
+                      className={`relative p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all ${
+                        newReminder.task_type === "assignment"
+                          ? "border-[#1C1C1E] bg-[#F2F2F7] shadow-[0_2px_0_#1C1C1E] sm:shadow-[0_4px_0_#1C1C1E]"
+                          : "border-[#E5E5EA] hover:border-[#9A9AA0]"
+                      }`}
+                    >
+                      <div className="flex flex-col items-center text-center">
+                        <div
+                          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl mb-2 sm:mb-3 flex items-center justify-center ${
+                            newReminder.task_type === "assignment"
+                              ? "bg-[#1C1C1E]"
+                              : "bg-[#F2F2F7]"
+                          }`}
+                        >
+                          <FaBook
+                            className={`h-5 w-5 sm:h-6 sm:w-6 ${
+                              newReminder.task_type === "assignment"
+                                ? "text-white"
+                                : "text-[#6B6B70]"
+                            }`}
+                          />
+                        </div>
+                        <h3
+                          className={`text-sm sm:text-base font-semibold ${
+                            newReminder.task_type === "assignment"
+                              ? "text-[#111111]"
+                              : "text-[#6B6B70]"
+                          }`}
+                        >
+                          Assignment
+                        </h3>
+                        <p className="text-xs text-[#9A9AA0] mt-1">
+                          Course-related tasks
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Personal Task Card */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setNewReminder({
+                          ...newReminder,
+                          task_type: "personal",
+                        })
+                      }
+                      className={`relative p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border-2 transition-all ${
+                        newReminder.task_type === "personal"
+                          ? "border-[#1C1C1E] bg-[#F2F2F7] shadow-[0_2px_0_#1C1C1E] sm:shadow-[0_4px_0_#1C1C1E]"
+                          : "border-[#E5E5EA] hover:border-[#9A9AA0]"
+                      }`}
+                    >
+                      <div className="flex flex-col items-center text-center">
+                        <div
+                          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl mb-2 sm:mb-3 flex items-center justify-center ${
+                            newReminder.task_type === "personal"
+                              ? "bg-[#1C1C1E]"
+                              : "bg-[#F2F2F7]"
+                          }`}
+                        >
+                          <FaUser
+                            className={`h-5 w-5 sm:h-6 sm:w-6 ${
+                              newReminder.task_type === "personal"
+                                ? "text-white"
+                                : "text-[#6B6B70]"
+                            }`}
+                          />
+                        </div>
+                        <h3
+                          className={`text-sm sm:text-base font-semibold ${
+                            newReminder.task_type === "personal"
+                              ? "text-[#111111]"
+                              : "text-[#6B6B70]"
+                          }`}
+                        >
+                          Personal Task
+                        </h3>
+                        <p className="text-xs text-[#9A9AA0] mt-1">
+                          Self-study & goals
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Two-Column Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+                  {/* Left Column */}
+                  <div className="space-y-4 sm:space-y-5">
+                    {/* Title */}
                     <div>
                       <label
-                        htmlFor="course"
-                        className="block text-sm font-medium text-[#6B6B70] mb-2"
+                        htmlFor="title"
+                        className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-1.5 sm:mb-2"
                       >
-                        Course
+                        Title <span className="text-[#FF7A7A]">*</span>
                       </label>
                       <div className="relative">
-                        <FaBook className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
-                        <select
-                          id="course"
-                          value={newReminder.course_id}
+                        <FaTag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
+                        <input
+                          type="text"
+                          id="title"
+                          required
+                          value={newReminder.title}
                           onChange={(e) =>
                             setNewReminder({
                               ...newReminder,
-                              course_id: e.target.value,
+                              title: e.target.value,
                             })
                           }
-                          className="w-full pl-10 pr-4 py-3 border-2 border-[#E5E5EA] rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors appearance-none"
+                          className="w-full pl-10 pr-4 py-2.5 sm:py-3 border-2 border-[#E5E5EA] rounded-xl sm:rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors text-sm sm:text-base"
+                          placeholder="e.g., Study for final exam"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Course */}
+                    {newReminder.task_type === "assignment" && (
+                      <div>
+                        <label
+                          htmlFor="course"
+                          className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-1.5 sm:mb-2"
                         >
-                          <option value="">Select a course (optional)</option>
-                          {courses.map((course) => (
-                            <option key={course.id} value={course.id}>
-                              {course.course_code} - {course.course_name}
-                            </option>
-                          ))}
+                          Course
+                        </label>
+                        <div className="relative">
+                          <FaBook className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
+                          <select
+                            id="course"
+                            value={newReminder.course_id}
+                            onChange={(e) =>
+                              setNewReminder({
+                                ...newReminder,
+                                course_id: e.target.value,
+                              })
+                            }
+                            className="w-full pl-10 pr-4 py-2.5 sm:py-3 border-2 border-[#E5E5EA] rounded-xl sm:rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors appearance-none text-sm sm:text-base"
+                          >
+                            <option value="">Select a course (optional)</option>
+                            {courses.map((course) => (
+                              <option key={course.id} value={course.id}>
+                                {course.course_code} - {course.course_name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Priority */}
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-1.5 sm:mb-2">
+                        Priority Level
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {[
+                          { value: "low", label: "Low", color: "bg-[#9A9AA0]" },
+                          {
+                            value: "medium",
+                            label: "Medium",
+                            color: "bg-[#4EC5B1]",
+                          },
+                          {
+                            value: "high",
+                            label: "High",
+                            color: "bg-[#FFB86B]",
+                          },
+                          {
+                            value: "urgent",
+                            label: "Urgent",
+                            color: "bg-[#FF7A7A]",
+                          },
+                        ].map((priority) => (
+                          <button
+                            key={priority.value}
+                            type="button"
+                            onClick={() =>
+                              setNewReminder({
+                                ...newReminder,
+                                priority: priority.value,
+                              })
+                            }
+                            className={`relative p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${
+                              newReminder.priority === priority.value
+                                ? "border-[#1C1C1E] bg-[#F2F2F7] shadow-[0_1px_0_#1C1C1E] sm:shadow-[0_2px_0_#1C1C1E]"
+                                : "border-[#E5E5EA] hover:border-[#9A9AA0]"
+                            }`}
+                          >
+                            <div
+                              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${priority.color}`}
+                            ></div>
+                            <span
+                              className={`text-xs sm:text-sm font-medium ${
+                                newReminder.priority === priority.value
+                                  ? "text-[#111111]"
+                                  : "text-[#6B6B70]"
+                              }`}
+                            >
+                              {priority.label}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-4 sm:space-y-5">
+                    {/* Due Date */}
+                    <div>
+                      <label
+                        htmlFor="due_date"
+                        className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-1.5 sm:mb-2"
+                      >
+                        Due Date <span className="text-[#FF7A7A]">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
+                        <input
+                          type="date"
+                          id="due_date"
+                          required
+                          value={newReminder.due_date}
+                          onChange={(e) =>
+                            setNewReminder({
+                              ...newReminder,
+                              due_date: e.target.value,
+                            })
+                          }
+                          className="w-full pl-10 pr-4 py-2.5 sm:py-3 border-2 border-[#E5E5EA] rounded-xl sm:rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors text-sm sm:text-base"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Due Time */}
+                    <div>
+                      <label
+                        htmlFor="due_time"
+                        className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-1.5 sm:mb-2"
+                      >
+                        Due Time
+                      </label>
+                      <div className="relative">
+                        <FaClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
+                        <input
+                          type="time"
+                          id="due_time"
+                          value={newReminder.due_time}
+                          onChange={(e) =>
+                            setNewReminder({
+                              ...newReminder,
+                              due_time: e.target.value,
+                            })
+                          }
+                          className="w-full pl-10 pr-4 py-2.5 sm:py-3 border-2 border-[#E5E5EA] rounded-xl sm:rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors text-sm sm:text-base"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Remind Me */}
+                    <div>
+                      <label
+                        htmlFor="reminder_before"
+                        className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-1.5 sm:mb-2"
+                      >
+                        Remind me
+                      </label>
+                      <div className="relative">
+                        <FaBell className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
+                        <select
+                          id="reminder_before"
+                          value={newReminder.reminder_before}
+                          onChange={(e) =>
+                            setNewReminder({
+                              ...newReminder,
+                              reminder_before: e.target.value,
+                            })
+                          }
+                          className="w-full pl-10 pr-4 py-2.5 sm:py-3 border-2 border-[#E5E5EA] rounded-xl sm:rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors appearance-none text-sm sm:text-base"
+                        >
+                          <option value="3_days">3 days before</option>
+                          <option value="1_day">1 day before</option>
+                          <option value="12_hours">12 hours before</option>
+                          <option value="custom">Custom</option>
                         </select>
                       </div>
                     </div>
-                  )}
-
-                  {/* Priority - Visual Cards */}
-                  <div>
-                    <label className="block text-sm font-medium text-[#6B6B70] mb-2">
-                      Priority Level
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { value: "low", label: "Low", color: "bg-[#9A9AA0]" },
-                        {
-                          value: "medium",
-                          label: "Medium",
-                          color: "bg-[#4EC5B1]",
-                        },
-                        { value: "high", label: "High", color: "bg-[#FFB86B]" },
-                        {
-                          value: "urgent",
-                          label: "Urgent",
-                          color: "bg-[#FF7A7A]",
-                        },
-                      ].map((priority) => (
-                        <button
-                          key={priority.value}
-                          type="button"
-                          onClick={() =>
-                            setNewReminder({
-                              ...newReminder,
-                              priority: priority.value,
-                            })
-                          }
-                          className={`relative p-3 rounded-xl border-2 transition-all flex items-center gap-2 ${
-                            newReminder.priority === priority.value
-                              ? "border-[#1C1C1E] bg-[#F2F2F7] shadow-[0_2px_0_#1C1C1E]"
-                              : "border-[#E5E5EA] hover:border-[#9A9AA0]"
-                          }`}
-                        >
-                          <div
-                            className={`w-3 h-3 rounded-full ${priority.color}`}
-                          ></div>
-                          <span
-                            className={`text-sm font-medium ${
-                              newReminder.priority === priority.value
-                                ? "text-[#111111]"
-                                : "text-[#6B6B70]"
-                            }`}
-                          >
-                            {priority.label}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </div>
 
-                {/* Right Column */}
-                <div className="space-y-4">
-                  {/* Due Date */}
-                  <div>
-                    <label
-                      htmlFor="due_date"
-                      className="block text-sm font-medium text-[#6B6B70] mb-2"
-                    >
-                      Due Date <span className="text-[#FF7A7A]">*</span>
-                    </label>
-                    <div className="relative">
-                      <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
-                      <input
-                        type="date"
-                        id="due_date"
-                        required
-                        value={newReminder.due_date}
-                        onChange={(e) =>
-                          setNewReminder({
-                            ...newReminder,
-                            due_date: e.target.value,
-                          })
-                        }
-                        className="w-full pl-10 pr-4 py-3 border-2 border-[#E5E5EA] rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Due Time */}
-                  <div>
-                    <label
-                      htmlFor="due_time"
-                      className="block text-sm font-medium text-[#6B6B70] mb-2"
-                    >
-                      Due Time
-                    </label>
-                    <div className="relative">
-                      <FaClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
-                      <input
-                        type="time"
-                        id="due_time"
-                        value={newReminder.due_time}
-                        onChange={(e) =>
-                          setNewReminder({
-                            ...newReminder,
-                            due_time: e.target.value,
-                          })
-                        }
-                        className="w-full pl-10 pr-4 py-3 border-2 border-[#E5E5EA] rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Reminder Before */}
-                  <div>
-                    <label
-                      htmlFor="reminder_before"
-                      className="block text-sm font-medium text-[#6B6B70] mb-2"
-                    >
-                      Remind me
-                    </label>
-                    <div className="relative">
-                      <FaBell className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#9A9AA0] h-4 w-4" />
-                      <select
-                        id="reminder_before"
-                        value={newReminder.reminder_before}
-                        onChange={(e) =>
-                          setNewReminder({
-                            ...newReminder,
-                            reminder_before: e.target.value,
-                          })
-                        }
-                        className="w-full pl-10 pr-4 py-3 border-2 border-[#E5E5EA] rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors appearance-none"
-                      >
-                        <option value="3_days">3 days before</option>
-                        <option value="1_day">1 day before</option>
-                        <option value="12_hours">12 hours before</option>
-                        <option value="custom">Custom</option>
-                      </select>
-                    </div>
+                {/* Description */}
+                <div className="mt-4 sm:mt-5 lg:mt-6">
+                  <label
+                    htmlFor="description"
+                    className="block text-xs sm:text-sm font-medium text-[#6B6B70] mb-1.5 sm:mb-2"
+                  >
+                    Description
+                  </label>
+                  <div className="relative">
+                    <FaAlignLeft className="absolute left-3 top-3 text-[#9A9AA0] h-4 w-4" />
+                    <textarea
+                      id="description"
+                      value={newReminder.description}
+                      onChange={(e) =>
+                        setNewReminder({
+                          ...newReminder,
+                          description: e.target.value,
+                        })
+                      }
+                      rows="3"
+                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 border-2 border-[#E5E5EA] rounded-xl sm:rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors resize-none text-sm sm:text-base"
+                      placeholder="Add any additional details about this task..."
+                    />
                   </div>
                 </div>
-              </div>
 
-              {/* Description - Full Width */}
-              <div className="mt-4">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-[#6B6B70] mb-2"
-                >
-                  Description
-                </label>
-                <div className="relative">
-                  <FaAlignLeft className="absolute left-3 top-3 text-[#9A9AA0] h-4 w-4" />
-                  <textarea
-                    id="description"
-                    value={newReminder.description}
-                    onChange={(e) =>
-                      setNewReminder({
-                        ...newReminder,
-                        description: e.target.value,
-                      })
-                    }
-                    rows="3"
-                    className="w-full pl-10 pr-4 py-3 border-2 border-[#E5E5EA] rounded-2xl bg-white focus:border-[#1C1C1E] focus:outline-none transition-colors resize-none"
-                    placeholder="Add any additional details about this task..."
-                  />
+                {/* Form Actions */}
+                <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-[#E5E5EA]">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="w-full sm:flex-1 py-2.5 sm:py-3 border-2 border-[#E5E5EA] rounded-xl sm:rounded-2xl text-[#6B6B70] text-sm sm:text-base font-medium hover:bg-[#F2F2F7] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="w-full sm:flex-1 py-2.5 sm:py-3 bg-[#1C1C1E] text-white text-sm sm:text-base rounded-xl sm:rounded-2xl font-medium shadow-[0_2px_0_#000000] sm:shadow-[0_4px_0_#000000] hover:translate-y-0.5 sm:hover:translate-y-1 transition-all"
+                  >
+                    Create Reminder
+                  </button>
                 </div>
-              </div>
-
-              {/* Form Actions */}
-              <div className="flex gap-3 mt-8 pt-6 border-t border-[#E5E5EA]">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="flex-1 py-3 border-2 border-[#E5E5EA] rounded-2xl text-[#6B6B70] font-medium hover:bg-[#F2F2F7] transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-3 bg-[#1C1C1E] text-white rounded-2xl font-medium shadow-[0_4px_0_#000000] hover:translate-y-1 transition-all"
-                >
-                  Create Reminder
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       )}
