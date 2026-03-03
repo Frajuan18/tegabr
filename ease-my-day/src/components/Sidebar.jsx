@@ -1,11 +1,11 @@
 // src/components/Sidebar.jsx
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  FaHome, 
-  FaCalendarAlt, 
-  FaBell, 
-  FaUsers, 
+import {
+  FaHome,
+  FaCalendarAlt,
+  FaBell,
+  FaUsers,
   FaChartLine,
   FaCog,
   FaSignOutAlt,
@@ -23,7 +23,7 @@ import {
   FaStar,
   FaRegCalendarAlt,
   FaRegCheckCircle,
-  FaBalanceScale
+  FaBalanceScale,
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
@@ -37,10 +37,10 @@ export default function Sidebar() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -50,52 +50,97 @@ export default function Sidebar() {
   }, [location, isMobile]);
 
   // prevent background scrolling when mobile sidebar is open
-  useEffect(() => {
-    if (isMobile && isOpen) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.paddingLeft = '3rem';
-    } else {
-      document.body.style.paddingLeft = '';
-    }
-    return () => {
-      document.body.style.paddingLeft = '';
-    };
-  }, [isMobile, isOpen]);
 
   // add minimal padding to body on mobile when menu button is visible
   useEffect(() => {
-    if (isMobile && !isOpen && location.pathname !== '/timeline' && location.pathname !== '/reminders') {
-      document.body.style.paddingLeft = '3rem';
+    if (isMobile && isOpen) {
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.paddingLeft = '';
+      document.body.style.overflow = "";
     }
+
     return () => {
-      document.body.style.paddingLeft = '';
+      document.body.style.overflow = "";
     };
-  }, [isMobile, isOpen, location.pathname]);
+  }, [isMobile, isOpen]);
 
   const menuItems = [
     // Main Dashboard
     { path: "/dashboard", name: "Dashboard", icon: FaHome, section: "main" },
-    
+
     // Timeline Views (single item)
-    { path: "/timeline", name: "Timeline Views", icon: FaCalendarAlt, section: "timeline" },
-    
+    {
+      path: "/timeline",
+      name: "Timeline Views",
+      icon: FaCalendarAlt,
+      section: "timeline",
+    },
+
     // Smart Features
-    { path: "/smart-reminders", name: "Smart Reminders", icon: FaBell, section: "smart" },
-    { path: "/workload", name: "Workload Awareness", icon: FaBalanceScale, section: "smart" },
-    { path: "/personal-tasks", name: "Personal Tasks", icon: FaClipboardList, section: "smart" },
-    { path: "/study-planner", name: "Study Planner", icon: FaBrain, section: "smart" },
-    { path: "/priority", name: "Priority System", icon: FaFlag, section: "smart" },
-    { path: "/progress", name: "Progress Tracking", icon: FaRegCheckCircle, section: "smart" },
+    {
+      path: "/smart-reminders",
+      name: "Smart Reminders",
+      icon: FaBell,
+      section: "smart",
+    },
+    {
+      path: "/workload",
+      name: "Workload Awareness",
+      icon: FaBalanceScale,
+      section: "smart",
+    },
+    {
+      path: "/personal-tasks",
+      name: "Personal Tasks",
+      icon: FaClipboardList,
+      section: "smart",
+    },
+    {
+      path: "/study-planner",
+      name: "Study Planner",
+      icon: FaBrain,
+      section: "smart",
+    },
+    {
+      path: "/priority",
+      name: "Priority System",
+      icon: FaFlag,
+      section: "smart",
+    },
+    {
+      path: "/progress",
+      name: "Progress Tracking",
+      icon: FaRegCheckCircle,
+      section: "smart",
+    },
     { path: "/focus", name: "Focus Mode", icon: FaRegEye, section: "smart" },
-    { path: "/notifications", name: "Notifications Hub", icon: FaRegBell, section: "smart" },
-    
+    {
+      path: "/notifications",
+      name: "Notifications Hub",
+      icon: FaRegBell,
+      section: "smart",
+    },
+
     // Bonus Features
-    { path: "/group-collab", name: "Group Collaboration", icon: FaUserFriends, section: "bonus" },
-    { path: "/stress-indicator", name: "Stress Indicator", icon: FaHeartbeat, section: "bonus" },
-    { path: "/smart-suggestions", name: "Smart Suggestions", icon: FaLightbulb, section: "bonus" },
-    
+    {
+      path: "/group-collab",
+      name: "Group Collaboration",
+      icon: FaUserFriends,
+      section: "bonus",
+    },
+    {
+      path: "/stress-indicator",
+      name: "Stress Indicator",
+      icon: FaHeartbeat,
+      section: "bonus",
+    },
+    {
+      path: "/smart-suggestions",
+      name: "Smart Suggestions",
+      icon: FaLightbulb,
+      section: "bonus",
+    },
+
     // Settings
     { path: "/settings", name: "Settings", icon: FaCog, section: "settings" },
   ];
@@ -119,9 +164,9 @@ export default function Sidebar() {
   const getInitials = () => {
     if (currentUser?.displayName) {
       return currentUser.displayName
-        .split(' ')
-        .map(word => word[0])
-        .join('')
+        .split(" ")
+        .map((word) => word[0])
+        .join("")
         .toUpperCase()
         .substring(0, 2);
     }
@@ -148,14 +193,16 @@ export default function Sidebar() {
           fixed top-0 left-0 z-40 h-full bg-white shadow-[0_10px_0_#E5E5EA,0_12px_24px_rgba(0,0,0,0.1)]
           transition-transform duration-300 ease-in-out
           w-full sm:w-52 lg:w-60 overflow-y-auto
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
         <div className="flex flex-col h-full p-4 lg:p-5">
-          
           {/* Logo */}
           <div className="mb-6 pt-4 lg:pt-6 relative">
-            <Link to="/" className="text-2xl font-extrabold text-[#1C1C1E] tracking-tight">
+            <Link
+              to="/"
+              className="text-2xl font-extrabold text-[#1C1C1E] tracking-tight"
+            >
               Tegbar
             </Link>
             {/* close button inside sidebar for mobile */}
@@ -190,8 +237,10 @@ export default function Sidebar() {
           <nav className="flex-1 overflow-y-auto">
             {sections.map((section) => {
               const SectionIcon = section.icon;
-              const sectionItems = menuItems.filter(item => item.section === section.id);
-              
+              const sectionItems = menuItems.filter(
+                (item) => item.section === section.id,
+              );
+
               if (sectionItems.length === 0) return null;
 
               return (
@@ -209,7 +258,7 @@ export default function Sidebar() {
                     {sectionItems.map((item) => {
                       const Icon = item.icon;
                       const isActive = location.pathname === item.path;
-                      
+
                       return (
                         <li key={item.path}>
                           <Link
@@ -219,14 +268,19 @@ export default function Sidebar() {
                             }}
                             className={`
                               flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all relative group
-                              ${isActive 
-                                ? 'bg-[#1C1C1E] text-white shadow-[0_4px_0_#000000]' 
-                                : 'text-[#6B6B70] hover:bg-[#F2F2F7] hover:text-[#111111]'
+                              ${
+                                isActive
+                                  ? "bg-[#1C1C1E] text-white shadow-[0_4px_0_#000000]"
+                                  : "text-[#6B6B70] hover:bg-[#F2F2F7] hover:text-[#111111]"
                               }
                             `}
                           >
-                            <Icon className={`h-4 w-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-[#9A9AA0] group-hover:text-[#111111]'}`} />
-                            <span className="text-sm font-medium truncate">{item.name}</span>
+                            <Icon
+                              className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-white" : "text-[#9A9AA0] group-hover:text-[#111111]"}`}
+                            />
+                            <span className="text-sm font-medium truncate">
+                              {item.name}
+                            </span>
                           </Link>
                         </li>
                       );

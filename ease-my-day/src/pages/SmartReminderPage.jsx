@@ -24,8 +24,8 @@ export default function SmartRemindersPage() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="lg:ml-64 min-h-screen pt-20 lg:pt-8 px-2 sm:px-6 lg:px-8 pb-8">
-        <div className="max-w-7xl lg:mx-auto">
+      <div className="lg:ml-64 min-h-screen pt-18 lg:pt-8 px-5 lg:px-8  pb-8">
+        <div className="w-full lg:max-w-7xl lg:mx-auto">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>

@@ -75,9 +75,8 @@ export default function TimelinePage() {
     <div className="min-h-screen bg-[#F2F2F7] font-outfit lg:ml-2">
       <Sidebar />
       
-      <div className="lg:ml-64 ml-0 min-h-screen p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl m-auto">
-          
+      <div className="lg:ml-64 min-h-screen pt-5 lg:pt-8 px-5 lg:px-8  pb-8">
+        <div className="w-full lg:max-w-7xl lg:mx-auto">
           {/* Header */}
           <div className="mb-6 mt-14 lg:mt-0  lg:ml-0">
             <h1 className="text-2xl sm:text-3xl font-bold text-[#111111]">Timeline Views</h1>
