@@ -53,16 +53,11 @@ export default function Sidebar() {
 
   // add minimal padding to body on mobile when menu button is visible
   useEffect(() => {
-    if (isMobile && isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
+    document.body.style.overflow = isOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isMobile, isOpen]);
+  }, [isOpen]);
 
   const menuItems = [
     // Main Dashboard
@@ -192,7 +187,7 @@ export default function Sidebar() {
         className={`
           fixed top-0 left-0 z-40 h-full bg-white shadow-[0_10px_0_#E5E5EA,0_12px_24px_rgba(0,0,0,0.1)]
           transition-transform duration-300 ease-in-out
-          w-full sm:w-52 lg:w-60 overflow-y-auto
+          w-72 sm:w-64 lg:w-60 overflow-y-auto
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
