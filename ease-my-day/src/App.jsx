@@ -13,12 +13,13 @@ import ActionHandler from "./components/ActionHandler";
 import Dashboard from "./pages/Dashboard";
 import TimelinePage from "./pages/TimelinePage";
 import SmartRemindersPage from "./pages/SmartReminderPage";
+import WorkloadAwarenessPage from "./pages/WorkAwarenessPage";
 function AppRouter() {
   const location = useLocation();
 
   return (
     <>
-      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email"  && location.pathname !== "/reset-password" && location.pathname !== "/dashboard" && location.pathname !== "/timeline" && location.pathname !== "/smart-reminders" && (
+      {location.pathname !== "/login" && location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/verify-email"  && location.pathname !== "/reset-password" && location.pathname !== "/dashboard" && location.pathname !== "/timeline" && location.pathname !== "/smart-reminders" && location.pathname !== "/work-awareness" && (
         <Navbar />
       )}
       <Routes>
@@ -32,6 +33,7 @@ function AppRouter() {
         <Route path="/dashboard" element={<Dashboard />} /> 
         <Route path="/timeline" element={<TimelinePage />} />
         <Route path="/smart-reminders" element={<SmartRemindersPage />} />
+        <Route path="/work-awareness" element={<WorkloadAwarenessPage/>}/>
       </Routes>
     </>
   );

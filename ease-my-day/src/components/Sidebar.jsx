@@ -79,7 +79,7 @@ export default function Sidebar() {
       section: "smart",
     },
     {
-      path: "/workload",
+      path: "/work-awareness",
       name: "Workload Awareness",
       icon: FaBalanceScale,
       section: "smart",
